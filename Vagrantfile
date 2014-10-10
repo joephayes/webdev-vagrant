@@ -152,17 +152,6 @@ SCRIPT
 
   config.vm.provision :shell, :inline => $dotfilesScript, :privileged => false
 
-$loadDatabaseScript = <<SCRIPT
-echo deleting database...
-curl -X DELETE http://localhost:5984/monasteries
-echo creating database...
-curl -X PUT    http://localhost:5984/monasteries
-echo loading database...
-curl -d @/vagrant/monasteries.json -H "Content-Type:application/json" -X POST http://localhost:5984/monasteries/_bulk_docs
-SCRIPT
-
-  config.vm.provision :shell, :inline => $loadDatabaseScript
-  
   # Enable provisioning with chef server, specifying the chef server URL,
   # and the path to the validation key (relative to this Vagrantfile).
   #
