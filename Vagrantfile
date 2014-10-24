@@ -148,6 +148,8 @@ if [ ! -d "/home/vagrant/dotfiles" ]; then
 fi
 cd /home/vagrant/dotfiles
 ./bootstrap.sh
+cd /home/vagrant/.vim/bundle/tern_for_vim
+npm install
 SCRIPT
 
   config.vm.provision :shell, :inline => $dotfilesScript, :privileged => false
