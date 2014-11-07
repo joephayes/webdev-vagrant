@@ -120,6 +120,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     chef.add_recipe "nginx"
     chef.add_recipe "nodejs"
     chef.add_recipe "golang"
+    chef.add_recipe "mongodb"
 
     chef.json = {
         couch_db: {
@@ -133,7 +134,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.provision :shell, :inline => "sudo apt-get update"
+  config.vm.provision :shell, :inline => "npm install -g yo"
+  config.vm.provision :shell, :inline => "npm install -g grunt-cli"
   config.vm.provision :shell, :inline => "npm install -g bower"
+  config.vm.provision :shell, :inline => "npm install -g generator-angular"
   config.vm.provision :shell, :inline => "npm install -g ember-cli"
   config.vm.provision :shell, :inline => "npm install -g express"
   config.vm.provision :shell, :inline => "npm install -g jshint"
