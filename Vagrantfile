@@ -1,7 +1,6 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-
 # Make sure required plugins are installed
 unless Vagrant.has_plugin?("vagrant-omnibus")
     raise 'vagrant-omnibus not installed!'
@@ -9,6 +8,10 @@ end
 
 unless Vagrant.has_plugin?("vagrant-berkshelf")
     raise 'vagrant-berkshelf not installed'
+end
+
+unless Vagrant.has_plugin?("vagrant-vbguest")
+    raise 'vagrant-vbguest not installed!'
 end
 
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
@@ -32,6 +35,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # accessing "localhost:8080" will access port 80 on the guest machine.
   # config.vm.network "forwarded_port", guest: 80, host: 8080
   config.vm.network "forwarded_port", guest: 35729, host: 35729
+  config.vm.network "forwarded_port", guest: 27018, host: 27018
+  config.vm.network "forwarded_port", guest: 5858, host: 5858
+  config.vm.network "forwarded_port", guest: 9000, host: 9000
+  config.vm.network "forwarded_port", guest: 8080, host: 8080
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -93,10 +100,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #   puppet.manifest_file  = "default.pp"
   # end
 
+    config.vm.provider "virtualbox" do |v|
+        v.memory = 1024
+        v.cpus = 2
+    end
+
   # Plugins
   config.berkshelf.enabled = true
   config.omnibus.chef_version = :latest
-  
+
   # Enable provisioning with chef solo, specifying a cookbooks path, roles
   # path, and data_bags path (all relative to this Vagrantfile), and adding
   # some recipes and/or roles.
@@ -110,38 +122,59 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #
   #   # You may also specify custom JSON attributes:
   #   chef.json = { mysql_password: "foo" }
-  
+
     chef.custom_config_path = "Vagrantfile.chef"
     chef.add_recipe "apt"
+    chef.add_recipe "redis"
     chef.add_recipe "git"
     chef.add_recipe "curl"
     chef.add_recipe "vim"
-    chef.add_recipe "couchdb"
     chef.add_recipe "nginx"
     chef.add_recipe "nodejs"
-    chef.add_recipe "golang"
     chef.add_recipe "mongodb"
 
     chef.json = {
-        couch_db: {
-            config: {
-                httpd: {
-                    bind_address: "0.0.0.0"
-                }
+        :redis   => {
+            :bind        => "127.0.0.1",
+            :port        => "6379",
+            :config_path => "/etc/redis/redis.conf",
+            :daemonize   => "yes",
+            :timeout     => "300",
+            :loglevel    => "notice"
+        },
+        :git     => {
+            :prefix => "/usr/local"
+        },
+        :nginx   => {
+            :dir                => "/etc/nginx",
+            :log_dir            => "/var/log/nginx",
+            :binary             => "/usr/sbin/nginx",
+            :user               => "www-data",
+            :init_style         => "runit",
+            :pid                => "/var/run/nginx.pid",
+            :worker_connections => "1024"
+        },
+        :mongodb => {
+            :dbpath  => "/var/lib/mongodb",
+            :logpath => "/var/log/mongodb",
+            :port    => "27017"
+        },
+        :nodejs => {
+            :version => "5.4.1",
+            :install_method => "source",
+            :source => {
+                :checksum => "78455ef2e3dea06b7d13d393c36711009048a91e5de5892523ec4a9be5a55e0c"
             }
         }
-    }
+      }
   end
 
   config.vm.provision :shell, :inline => "sudo apt-get update"
   config.vm.provision :shell, :inline => "npm install -g yo"
   config.vm.provision :shell, :inline => "npm install -g grunt-cli"
   config.vm.provision :shell, :inline => "npm install -g bower"
-  config.vm.provision :shell, :inline => "npm install -g generator-angular"
-  config.vm.provision :shell, :inline => "npm install -g ember-cli"
+  config.vm.provision :shell, :inline => "npm install -g generator-angular-fullstack"
   config.vm.provision :shell, :inline => "npm install -g express"
-  config.vm.provision :shell, :inline => "npm install -g jshint"
-  config.vm.provision :shell, :inline => "npm install -g mocha"
   config.vm.provision :shell, :inline => "npm install -g node-inspector"
   config.vm.provision :shell, :inline => "npm install -g nodemon"
 
@@ -152,8 +185,6 @@ if [ ! -d "/home/vagrant/dotfiles" ]; then
 fi
 cd /home/vagrant/dotfiles
 ./bootstrap.sh
-cd /home/vagrant/.vim/bundle/tern_for_vim
-npm install
 SCRIPT
 
   config.vm.provision :shell, :inline => $dotfilesScript, :privileged => false
