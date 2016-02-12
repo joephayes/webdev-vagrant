@@ -160,10 +160,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             :port    => "27017"
         },
         :nodejs => {
-            :version => "5.4.1",
+            :version => "5.6.0",
             :install_method => "source",
             :source => {
-                :checksum => "78455ef2e3dea06b7d13d393c36711009048a91e5de5892523ec4a9be5a55e0c"
+                :checksum => "3af2cc5e5970afc83e59f2065fea2e2df846a544a100cd3c0527f0db05bec27f"
             }
         }
       }
