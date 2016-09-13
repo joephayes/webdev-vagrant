@@ -1,3 +1,5 @@
+#!/bin/bash
+
 set -e
 
 vagrantpath=$(su - vagrant -c env | grep ^PATH= | cut -d'=' -f2-);
