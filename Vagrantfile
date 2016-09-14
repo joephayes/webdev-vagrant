@@ -75,5 +75,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision :shell, :inline => "npm install -g nodemon"
   config.vm.provision :shell, :path => "./scripts/redis.sh"
   config.vm.provision :shell, :path => "./scripts/mongodb.sh"
+  config.vm.provision :shell, :path => "./scripts/jre.sh"
   config.vm.provision :shell, :path => "./scripts/setup.sh", :run => "always"
 end
