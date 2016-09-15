@@ -24,7 +24,5 @@ To start the VM, change directory to the directory where you cloned the repo and
 run the following command:
 
 ```bash
-$ vagrant up
+vagrant up
 ```
-
-
