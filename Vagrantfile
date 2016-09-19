@@ -6,9 +6,9 @@ VAGRANTFILE_API_VERSION = "2"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "bento/ubuntu-14.04"
 
-  config.vm.network :forwarded_port, guest: 6379, host: 6379, auto_correct: true
-  config.vm.network :forwarded_port, guest: 27017, host: 27017, auto_correct: true
-  config.vm.network :forwarded_port, guest: 9000, host: 9000, auto_correct: true
+#  config.vm.network :forwarded_port, guest: 6379, host: 6379, auto_correct: true
+#  config.vm.network :forwarded_port, guest: 27017, host: 27017, auto_correct: true
+#  config.vm.network :forwarded_port, guest: 9000, host: 9000, auto_correct: true
 
   config.vm.network :private_network, ip: "192.168.33.10"
 
@@ -41,6 +41,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     chef.add_recipe "git"
     chef.add_recipe "nginx"
     chef.add_recipe "nodejs"
+    chef.add_recipe "ruby_build"
+    chef.add_recipe "ruby_rbenv::user"
+    chef.add_recipe "vim"
 
     chef.json = {
         :git     => {
@@ -56,11 +59,23 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           :worker_connections => "1024"
         },
         :nodejs => {
-          :version => "6.5.0",
+          :version => "6.3.1",
           :install_method => "binary",
           :binary => {
-            :checksum => "575638830e4ba11c5afba5c222934bc5e338e74df2f27ca09bad09014b4aa415"
+            :checksum => "eccc530696d18b07c5785e317b2babbea9c1dd14dbab80be734b820fc241ddea"
           }
+        },
+        :rbenv => {
+          :user_installs => [{
+            :user => "vagrant",
+            :rubies => ["2.3.1"],
+            :global => "2.3.1",
+            :gems => {
+              "2.3.1" => [
+                {:name => "bundler"}
+              ]
+            }
+          }]
         }
       }
   end
@@ -73,6 +88,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision :shell, :inline => "npm install -g express"
   config.vm.provision :shell, :inline => "npm install -g node-inspector"
   config.vm.provision :shell, :inline => "npm install -g nodemon"
+  config.vm.provision :shell, :inline => "wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh"
   config.vm.provision :shell, :path => "./scripts/redis.sh"
   config.vm.provision :shell, :path => "./scripts/mongodb.sh"
   config.vm.provision :shell, :path => "./scripts/jre.sh"
