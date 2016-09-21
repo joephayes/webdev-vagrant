@@ -59,10 +59,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           :worker_connections => "1024"
         },
         :nodejs => {
-          :version => "6.3.1",
+          :version => "4.5.0",
           :install_method => "binary",
           :binary => {
-            :checksum => "eccc530696d18b07c5785e317b2babbea9c1dd14dbab80be734b820fc241ddea"
+            :checksum => "c6ee1f4303353e3605ff70de180431417eb594fe08daf612e692216236750c55"
           }
         },
         :rbenv => {
