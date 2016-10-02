@@ -59,10 +59,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           :worker_connections => "1024"
         },
         :nodejs => {
-          :version => "4.5.0",
+          :version => "4.6.0",
           :install_method => "binary",
           :binary => {
-            :checksum => "c6ee1f4303353e3605ff70de180431417eb594fe08daf612e692216236750c55"
+            :checksum => "acf08148cecf245f28126122ac9128ff9909f00938b18d80fc0b92648d1c98a8"
           }
         },
         :rbenv => {
@@ -81,6 +81,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.provision :shell, :inline => "sudo apt-get update"
+  config.vm.provision :shell, :inline => "npm install -g npm"
   config.vm.provision :shell, :inline => "npm install -g yo"
   config.vm.provision :shell, :inline => "npm install -g grunt-cli"
   config.vm.provision :shell, :inline => "npm install -g bower"
