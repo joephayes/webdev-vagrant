@@ -4,7 +4,7 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "bento/ubuntu-14.04"
+  config.vm.box = "bento/ubuntu-16.04"
 
 #  config.vm.network :forwarded_port, guest: 6379, host: 6379, auto_correct: true
 #  config.vm.network :forwarded_port, guest: 27017, host: 27017, auto_correct: true
@@ -41,8 +41,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     chef.add_recipe "git"
     chef.add_recipe "nginx"
     chef.add_recipe "nodejs"
-    chef.add_recipe "ruby_build"
-    chef.add_recipe "ruby_rbenv::user"
     chef.add_recipe "vim"
 
     chef.json = {
@@ -59,23 +57,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           :worker_connections => "1024"
         },
         :nodejs => {
-          :version => "4.6.0",
+          :version => "8.9.4",
           :install_method => "binary",
           :binary => {
-            :checksum => "acf08148cecf245f28126122ac9128ff9909f00938b18d80fc0b92648d1c98a8"
+            :checksum => "21fb4690e349f82d708ae766def01d7fec1b085ce1f5ab30d9bda8ee126ca8fc"
           }
-        },
-        :rbenv => {
-          :user_installs => [{
-            :user => "vagrant",
-            :rubies => ["2.3.1"],
-            :global => "2.3.1",
-            :gems => {
-              "2.3.1" => [
-                {:name => "bundler"}
-              ]
-            }
-          }]
         }
       }
   end
@@ -87,11 +73,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision :shell, :inline => "npm install -g bower"
   config.vm.provision :shell, :inline => "npm install -g generator-angular-fullstack"
   config.vm.provision :shell, :inline => "npm install -g express"
-  config.vm.provision :shell, :inline => "npm install -g node-inspector"
   config.vm.provision :shell, :inline => "npm install -g nodemon"
-  config.vm.provision :shell, :inline => "wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh"
-  config.vm.provision :shell, :path => "./scripts/redis.sh"
-  config.vm.provision :shell, :path => "./scripts/mongodb.sh"
-  config.vm.provision :shell, :path => "./scripts/jre.sh"
   config.vm.provision :shell, :path => "./scripts/setup.sh", :run => "always"
 end
