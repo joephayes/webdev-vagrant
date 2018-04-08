@@ -67,6 +67,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.provision :shell, :inline => "sudo apt-get update"
+  config.vm.provision :shell, :inline => "sudo apt-get install -y xdg-utils"
   config.vm.provision :shell, :inline => "npm install -g npm"
   config.vm.provision :shell, :inline => "npm install -g yo"
   config.vm.provision :shell, :inline => "npm install -g grunt-cli"
